@@ -1,0 +1,16 @@
+interface={{ interface.name }}
+bind-dynamic
+no-hosts
+
+domain={{ interface.domain }}
+
+dhcp-range={{ interface.dhcp_range }},12h
+dhcp-option=1,{{ interface.network | ipaddr('netmask') }}
+dhcp-option=3,{{ interface.gateway }}
+
+{% for host in interface.dhcp_hosts %}
+dhcp-host={{ host.mac }},{{ host.ip }}
+{% endfor %}
+
+server=/{{ interface.domain }}/{{ interface.gateway }}
+server=/#/8.8.8.8

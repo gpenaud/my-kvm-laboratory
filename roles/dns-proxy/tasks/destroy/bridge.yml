@@ -1,0 +1,20 @@
+
+- name: "destroy/bridge.yml - enable dnsmasq instance for {{ interface.name }}"
+  service:
+    name: "dnsmasq@{{ interface.name }}"
+    enabled: no
+    state: stopped
+
+- name: "destroy/bridge.yml - make interface {{ interface.name }} down"
+  command: ifdown {{ interface.name }}
+
+- name: "destroy/bridge.yml - generate dnsmasq instance for {{ interface.name }}"
+  file:
+    state: absent
+    dest: "/etc/dnsmasq.d/{{ interface.name }}.conf"
+
+
+- name: "destroy/bridge.yml - generate interface file for {{ interface.name }}"
+  file:
+    state: absent
+    dest: "/etc/network/interfaces.d/{{ interface.name }}"

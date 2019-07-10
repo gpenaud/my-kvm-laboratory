@@ -1,0 +1,74 @@
+
+- name: vm/create.yml - create cluster definition directory
+  file:
+    path: "{{ cluster_definition_directory }}"
+    state: directory
+    mode: 0755
+
+- name: vm/create.yml - set vm domain as fact
+  set_fact:
+    vm_domain: "{{ cluster_definition_directory }}/{{ vm.name }}.xml"
+    ignition_file_path: "{{ cluster_ignition_file_path }}/provision-{{ vm.name }}.ign"
+
+- name: vm/create.yml - copy qcow2 image of coreos
+  command: qemu-img create -f qcow2 -b coreos_production_qemu_image.img coreos-{{ vm.name }}.qcow2
+  args:
+    chdir: "{{ coreos_default_directory }}"
+
+- name: vm/create.yml - dump xml for instance
+  shell: |
+    virt-install --connect qemu:///system \
+      --import \
+      --name {{ vm.name }} \
+      --ram 1024 --vcpus 1 \
+      --os-type=linux \
+      --os-variant=virtio26 \
+      --disk path={{ coreos_default_directory }}/coreos-{{ vm.name }}.qcow2,format=qcow2,bus=virtio \
+      --network bridge={{ vm.bridge }},model=virtio,mac={{ vm.hmac }} \
+      --vnc --noautoconsole \
+      --print-xml > {{ vm_domain }}
+
+- name: vm/create.yml - template out ignition file
+  template:
+    src: provision.ign.j2
+    dest: "{{ ignition_file_path }}"
+
+- name: vm/create.yml - update domain definition with xml editor
+  shell: |
+    xmlstarlet ed -P -L -i "//domain" -t attr -n "xmlns:qemu" --value "http://libvirt.org/schemas/domain/qemu/1.0" "{{ vm_domain }}"
+    xmlstarlet ed -P -L -s "//domain" -t elem -n "qemu:commandline" "{{ vm_domain }}"
+    xmlstarlet ed -P -L -s "//domain/qemu:commandline" -t elem -n "qemu:arg" "{{ vm_domain }}"
+    xmlstarlet ed -P -L -s "(//domain/qemu:commandline/qemu:arg)[1]" -t attr -n "value" -v "-fw_cfg" "{{ vm_domain }}"
+    xmlstarlet ed -P -L -s "//domain/qemu:commandline" -t elem -n "qemu:arg" "{{ vm_domain }}"
+    xmlstarlet ed -P -L -s "(//domain/qemu:commandline/qemu:arg)[2]" -t attr -n "value" -v "name=opt/com.coreos/config,file={{ ignition_file_path }}" "{{ vm_domain }}"
+
+
+- name: vm/create.yml - set vm definition file path
+  set_fact:
+    vm_definition_file_path: "{{ cluster_definition_directory }}/{{ vm.name }}.xml"
+
+- name: vm/create.yml - define vm {{ vm.name }}
+  virt:
+    name: "{{ vm.name }}"
+    command: define
+    xml: "{{ lookup('template', vm_definition_file_path) }}"
+  ignore_errors: yes
+  register: vm_defined
+  tags:
+    - vm
+
+- name: vm/create.yml - create vm {{ vm.name }}
+  virt:
+    name: "{{ vm.name }}"
+    command: create
+    xml: "{{ lookup('template', vm_definition_file_path) }}"
+  ignore_errors: yes
+  register: vm_created
+  tags:
+    - vm
+
+# - name: add vms to futur hosts
+#   add_host:
+#     name: "{{ vm.ip }}"
+#     groups: k8s_cluster
+#     vm_name: "{{ vm.name }}"

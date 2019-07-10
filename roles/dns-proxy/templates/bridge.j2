@@ -1,0 +1,11 @@
+{%- set netmask = interface.network | ipaddr('netmask') -%}
+
+auto {{ interface.name }}
+iface {{ interface.name }} inet static
+  bridge_ports none
+  bridge_fd 0
+  bridge_maxwait 0
+  address {{ interface.gateway }}
+  netmask {{ netmask }}
+  up iptables -t nat -A POSTROUTING -s {{ interface.network }} -o {{ interface.bridged_on }} -j  MASQUERADE
+  up iptables -t mangle -A POSTROUTING -p udp --dport bootpc -s {{ interface.network }} -j CHECKSUM --checksum-fill || true

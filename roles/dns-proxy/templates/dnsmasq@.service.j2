@@ -1,0 +1,12 @@
+# /lib/systemd/system/dnsmasq@.service
+[Unit]
+Description=DHCP and DNS cache server bound on specified interface
+After=network.target
+
+[Service]
+ExecStart=/usr/sbin/dnsmasq -k --conf-file=/etc/dnsmasq.d/%i.conf
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

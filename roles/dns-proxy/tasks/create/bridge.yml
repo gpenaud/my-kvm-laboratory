@@ -1,0 +1,19 @@
+
+- name: "create/bridge.yml - generate interface file for {{ interface.name }}"
+  template:
+    src: templates/bridge.j2
+    dest: "/etc/network/interfaces.d/{{ interface.name }}"
+
+- name: "create/bridge.yml - make interface {{ interface.name }} up"
+  command: ifup {{ interface.name }}
+
+- name: "create/bridge.yml - generate dnsmasq instance for {{ interface.name }}"
+  template:
+    src: templates/dnsmasq-bridge.j2
+    dest: "/etc/dnsmasq.d/{{ interface.name }}.conf"
+
+- name: "create/bridge.yml - enable dnsmasq instance for {{ interface.name }}"
+  service:
+    name: "dnsmasq@{{ interface.name }}"
+    enabled: yes
+    state: started

@@ -1,0 +1,5 @@
+<network>
+  <name>{{ cluster_network.name }}</name>
+  <bridge name="{{ cluster_network.name }}" />
+  <forward mode='{{ cluster_network.type }}'/>
+</network>

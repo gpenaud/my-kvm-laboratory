@@ -1,0 +1,16 @@
+galaxy_info:
+  author: Guillaume Penaud
+  description: Libvirt orchestrator
+  company: Qwant
+
+  license: license (GPLv2, CC-BY, etc)
+  min_ansible_version: 2.2
+
+  platforms:
+  - name: Debian
+    versions:
+     - jessie
+
+  galaxy_tags: [virtualisation]
+
+dependencies: []

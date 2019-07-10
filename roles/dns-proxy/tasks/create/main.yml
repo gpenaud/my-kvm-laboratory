@@ -1,0 +1,21 @@
+
+- name: main.yml - include sourcing interfaces file in /etc/network/interfaces
+  blockinfile:
+    path: /etc/network/interfaces
+    block: |
+      # ensure to source all other interfaces
+      source /etc/network/interfaces.d/*
+
+- name: main.yml - generate systemd dnmasq@ service
+  template:
+    src: templates/dnsmasq@.service.j2
+    dest: /etc/systemd/system/dnsmasq@.service
+
+- name: main.yml - create proxy dnsmasq instance
+  include: proxy.yml
+
+- name: main.yml - create bridges and dnsmasq
+  include: bridge.yml
+  with_items: "{{ dns_proxy_bridges }}"
+  loop_control:
+    loop_var: interface

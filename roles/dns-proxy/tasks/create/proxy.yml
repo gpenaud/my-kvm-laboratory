@@ -1,0 +1,11 @@
+
+- name: create/proxy.yml - generate dnsmasq instance for proxy
+  template:
+    src: templates/dnsmasq-proxy.j2
+    dest: /etc/dnsmasq.d/proxy.conf
+
+- name: create/proxy.yml - enable dnsmasq instance for proxy
+  service:
+    name: dnsmasq@proxy
+    enabled: yes
+    state: started

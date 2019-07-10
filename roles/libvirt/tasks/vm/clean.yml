@@ -1,0 +1,6 @@
+
+- name: main - refresh defined vms data
+  virt:
+    command: info
+  register: info_vms
+  when: action == 'clean'

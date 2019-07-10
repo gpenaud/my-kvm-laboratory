@@ -1,0 +1,19 @@
+
+- name: main.yml - remove sourcing interfaces file in /etc/network/interfaces
+  blockinfile:
+    path: /etc/network/interfaces
+    block: ""
+
+- name: main.yml - destroy proxy dnsmasq instance
+  include: proxy.yml
+
+- name: main.yml - destroy bridges and dnsmasq
+  include: bridge.yml
+  with_items: "{{ dns_proxy_bridges }}"
+  loop_control:
+    loop_var: interface
+
+- name: main.yml - destroy systemd dnmasq@ service
+  file:
+    state: absent
+    path: /etc/systemd/system/dnsmasq@.service

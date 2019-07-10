@@ -1,0 +1,21 @@
+- name: prepare.yml - create coreos images directory
+  file:
+    path: "{{ coreos_default_directory }}"
+    state: directory
+    mode: 0755
+
+- name: prepare.yml - get coreos base image
+  get_url:
+    url: https://stable.release.core-os.net/amd64-usr/current/coreos_production_qemu_image.img.bz2
+    dest: "{{ coreos_default_directory }}/coreos_production_qemu_image.img.bz2"
+
+- name: prepare.yml - get coreos base image signature
+  get_url:
+    url: https://stable.release.core-os.net/amd64-usr/current/coreos_production_qemu_image.img.bz2.sig
+    dest: "{{ coreos_default_directory }}/coreos_production_qemu_image.img.bz2.sig"
+
+- name: prepare.yml - extract coreos image bzip2 file
+  command: bzip2 --keep --decompress coreos_production_qemu_image.img.bz2
+  args:
+    chdir: "{{ coreos_default_directory }}"
+    creates: "{{ coreos_default_directory }}/coreos_production_qemu_image.img"

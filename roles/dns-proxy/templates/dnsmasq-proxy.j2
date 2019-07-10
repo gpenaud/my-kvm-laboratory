@@ -1,0 +1,12 @@
+interface=lo
+bind-dynamic
+no-hosts
+
+localise-queries
+cache-size=0
+no-negcache
+
+{% for interface in dns_proxy_bridges %}
+server=/{{ interface.domain }}/{{ interface.gateway }}
+{% endfor %}
+server=/#/8.8.8.8

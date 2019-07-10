@@ -1,0 +1,34 @@
+{
+  "ignition": {
+    "config": {},
+    "timeouts": {},
+    "version": "2.1.0"
+  },
+  "networkd": {},
+  "passwd": {
+    "users": [
+      {
+        "name": "{{ coreos_default_user }}",
+        "sshAuthorizedKeys": [
+          "{{ coreos_default_ssh_key }}"
+        ]
+      }
+    ]
+  },
+  "storage": {
+    "files": [
+      {
+        "filesystem": "root",
+        "group": {},
+        "path": "/etc/hostname",
+        "user": {},
+        "contents": {
+          "source": "data:,{{ vm.name }}",
+          "verification": {}
+        },
+        "mode": 420
+      }
+    ]
+  },
+  "systemd": {}
+}

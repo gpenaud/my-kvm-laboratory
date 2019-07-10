@@ -1,0 +1,14 @@
+---
+
+libvirt_image_path: /home/gpenaud/taf/tests/libvirt/images
+cluster_network: {}
+cluster_vms: []
+
+coreos_default_directory: /var/lib/libvirt/images/coreos
+coreos_image_url: https://stable.release.core-os.net/amd64-usr/current/coreos_production_qemu_image.img.bz2
+coreos_default_ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQC0W3X2dWtFcbJX0jxPkO+hx7mTAtdbKim/VVOhb7wIGDI/MeC5JJ+RTVCB4eteIifOAEQ++fMbmdYqNmiBvMPXlbmhcF23uMIPnq9NlYc9DJgBZ0bqTIE3O7jgxFoTlbZwwBAPT8JyQ/H2CKL7ImlDoGQmBpAXKISesNwgxIxYXQ=="
+coreos_default_user: core
+coreos_image_name: coreos.qcow2
+
+cluster_definition_directory: /var/lib/libvirt/cluster
+cluster_ignition_file_path: "{{ cluster_definition_directory }}"

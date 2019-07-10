@@ -1,0 +1,53 @@
+---
+
+- name: main - get defined vms data
+  virt_net:
+    command: info
+  register: info_vm_networks
+
+- set_fact:
+    destroy_network: "{{ force_destroy | default(false) }}"
+- block:
+  - pause:
+      prompt: "Do you want to erase cluster network actual configuration [yes/no] ?"
+    register: let_us
+  - set_fact:
+      destroy_network: "{{ let_us.user_input | bool }}"
+  when:
+    - cluster_network.name in info_vm_networks.networks | list
+    - not force_destroy is defined
+
+- name: destroy network
+  virt_net:
+    name: "{{ cluster_network.name }}"
+    command: destroy
+  ignore_errors: yes
+  tags:
+    - vm
+  when: action == 'destroy' or destroy_network | bool
+
+- name: undefine network
+  virt_net:
+    name: "{{ cluster_network.name }}"
+    command: undefine
+  ignore_errors: yes
+  tags:
+    - vm
+  when: action == 'destroy' or destroy_network | bool
+
+- name: create network
+  virt_net:
+    name: "{{ cluster_network.name }}"
+    command: define
+    xml: "{{ lookup('template', '../templates/network.xml.j2') }}"
+  ignore_errors: yes
+  tags:
+    - vm
+
+- name: start network
+  virt_net:
+    name: "{{ cluster_network.name }}"
+    command: start
+  ignore_errors: yes
+  tags:
+    - vm

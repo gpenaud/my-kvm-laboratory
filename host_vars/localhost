@@ -1,0 +1,59 @@
+---
+
+cluster_definition_directory: /var/lib/libvirt/kubernetes
+
+cluster_network:
+  name: test-bridge
+  type: bridge
+  domain: test.lan
+
+cluster_vms:
+  - name: controller-0
+    hmac: 52:54:00:6c:3a:01
+    bridge: test-bridge
+
+  - name: controller-1
+    hmac: 52:54:00:6c:3a:02
+    bridge: test-bridge
+
+  - name: worker-0
+    hmac: 52:54:00:6c:3a:03
+    bridge: test-bridge
+
+  - name: worker-1
+    hmac: 52:54:00:6c:3a:04
+    bridge: test-bridge
+
+
+dns_proxy_bridges:
+  # - name: k8s-bridge
+  #   network: 10.242.0.0/24
+  #   gateway: 10.242.0.1
+  #   bridged_on: wlp59s0
+  #   domain: k8s.lan
+  #   dhcp_range: 10.242.0.2,10.242.0.254
+  #   dhcp_hosts:
+  #     - mac: 52:54:00:6c:3c:01
+  #       ip: 10.242.0.11
+  #     - mac: 52:54:00:6c:3c:02
+  #       ip: 10.242.0.12
+  #     - mac: 52:54:00:6c:3c:03
+  #       ip: 10.242.0.13
+  #     - mac: 52:54:00:6c:3c:04
+  #       ip: 10.242.0.14
+
+  - name: test-bridge
+    network: 10.240.0.0/24
+    gateway: 10.240.0.1
+    bridged_on: wlp59s0
+    domain: test.lan
+    dhcp_range: 10.240.0.2,10.240.0.254
+    dhcp_hosts:
+      - mac: 52:54:00:6c:3a:01
+        ip: 10.240.0.11
+      - mac: 52:54:00:6c:3a:02
+        ip: 10.240.0.12
+      - mac: 52:54:00:6c:3a:03
+        ip: 10.240.0.13
+      - mac: 52:54:00:6c:3a:04
+        ip: 10.240.0.14

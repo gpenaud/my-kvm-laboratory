@@ -1,0 +1,32 @@
+---
+
+- set_fact:
+    destroy_vm: "{{ force_destroy | default(false) }}"
+  when: destroy_vm is not defined
+- block:
+  - pause:
+      prompt: "Do you want to erase VM actual configuration [yes/no] ?"
+    register: let_us
+  - set_fact:
+      destroy_vm: "{{ let_us.user_input | bool }}"
+      validated: "{{ let_us.user_input | bool }}"
+  when:
+    - vm.name in info_vms | list
+    - not force_destroy is defined
+    - validated is not defined
+
+- name: destroy vm {{ vm.name }}
+  virt:
+    name: "{{ vm.name }}"
+    command: destroy
+  when: action == 'destroy' or destroy_vm | bool
+  tags:
+    - vm
+
+- name: undefine vm {{ vm.name }}
+  virt:
+    name: "{{ vm.name }}"
+    command: undefine
+  when: action == 'destroy' or destroy_vm | bool
+  tags:
+    - vm

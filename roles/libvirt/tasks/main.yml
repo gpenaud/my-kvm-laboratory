@@ -1,0 +1,61 @@
+---
+
+# - debug:
+#     msg: "INFO - set the extra variable 'destroy' to 'yes' if you want to rebuild your infrastructure (-e destroy=yes)"
+#   when: not destroy is defined
+#
+# - name: main.yml - install required packages
+#   apt:
+#     state: present
+#     name: "{{ package }}"
+#   loop:
+#     - libvirt-daemon-system
+#     - libvirt-dev
+#     - libvirt-clients
+#     - bzip2
+#     - virt-manager
+#     - xmlstarlet
+#   loop_control:
+#     loop_var: package
+
+- name: main - prepare host to work with coreos vm
+  include: prepare.yml
+
+- name: main - get defined vms data
+  virt:
+    command: info
+  register: info_vms
+
+- name: main - manages networks
+  include: network.yml
+
+- name: main - include vm destruction part
+  include: vm/destroy.yml
+  with_items: "{{ cluster_vms }}"
+  loop_control:
+    loop_var: vm
+
+- name: main - refresh defined vms data
+  virt:
+    command: info
+  register: info_vms
+  when: action == 'create'
+
+- name: main - include vm creation part
+  include: vm/create.yml
+  with_items: "{{ cluster_vms }}"
+  loop_control:
+    loop_var: vm
+  when: action == 'create'
+
+- name: wait for vms to start successfully
+  local_action:
+    module: wait_for
+    host: "{{ current_vm.name }}.{{ cluster_network.domain }}"
+    port: 22
+    delay: 1
+    timeout: 120
+  with_items: "{{ cluster_vms }}"
+  loop_control:
+    loop_var: current_vm
+  when: action == 'create'

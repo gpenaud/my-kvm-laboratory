@@ -1,0 +1,8 @@
+
+- hosts: localhost
+  become: yes
+  gather_facts: no
+  vars:
+    action: destroy
+  roles:
+    - dns-proxy
