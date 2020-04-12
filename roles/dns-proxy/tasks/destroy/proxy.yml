@@ -5,3 +5,5 @@
     path: /etc/dnsmasq.d/proxy.conf
   notify:
     - stop and disable dnsmasq proxy service
+
+- meta: flush_handlers

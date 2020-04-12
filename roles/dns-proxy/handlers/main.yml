@@ -1,4 +1,3 @@
----
 
 - name: restart networking
   service:
@@ -10,6 +9,12 @@
     name: dnsmasq
     state: stopped
     enabled: no
+
+- name: down interface
+  command: "ifdown {{ current_interface }}"
+
+- name: remove interface
+  command: "ip link delete {{ current_interface }}"
 
 - name: stop and disable dnsmasq proxy service
   service:

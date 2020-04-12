@@ -10,10 +10,13 @@
   notify:
     - stop and disable dnsmasq interface service
 
-
 - name: "destroy/bridge.yml - generate interface file for {{ interface.name }}"
   file:
     state: absent
     dest: "/etc/network/interfaces.d/{{ interface.name }}"
   notify:
+    - down interface
+    - remove interface
     - restart networking
+
+- meta: flush_handlers

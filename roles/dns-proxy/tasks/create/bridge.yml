@@ -6,6 +6,8 @@
   notify:
     - restart networking
 
+- meta: flush_handlers
+
 - name: "create/bridge.yml - generate dnsmasq instance for {{ interface.name }}"
   template:
     src: templates/dnsmasq-bridge.j2
