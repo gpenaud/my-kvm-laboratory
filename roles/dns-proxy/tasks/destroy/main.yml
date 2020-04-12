@@ -17,3 +17,18 @@
   file:
     state: absent
     path: /etc/systemd/system/dnsmasq@.service
+
+- name: main.yml - remove dnsmasq package
+  package:
+    name: dnsmasq
+    state: absent
+
+- name: main.yml - destroy systemd dnmasq@service
+  file:
+    state: absent
+    path: /etc/systemd/system/dnsmasq.service
+
+- name: main.yml - set 8.8.8.8 as nameserver in resolv.conf
+  copy:
+    content: 'nameserver 8.8.8.8'
+    dest: /etc/resolv.conf

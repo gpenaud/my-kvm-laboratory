@@ -1,0 +1,43 @@
+file:
+  /etc/resolv.conf:
+    exists: true
+    contains:
+      - nameserver 8.8.8.8
+
+  /etc/network/interfaces:
+    exists: true
+    contains:
+      - "!# ensure to source all other interfaces"
+      - "!source /etc/network/interfaces.d/*"
+
+  /etc/network/interfaces.d/swarm:
+    exists: false
+
+  /etc/systemd/system/dnsmasq.service:
+    exists: false
+
+  /etc/systemd/system/dnsmasq@.service:
+    exists: false
+
+  /etc/dnsmasq.d/proxy.conf:
+    exists: false
+
+  /etc/dnsmasq.d/swarm.conf:
+    exists: false
+
+package:
+  dnsmasq:
+    installed: false
+
+service:
+  dnsmasq:
+    enabled: false
+    running: false
+
+  dnsmasq@proxy:
+    enabled: false
+    running: false
+
+  dnsmasq@swarm:
+    enabled: false
+    running: false

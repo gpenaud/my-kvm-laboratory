@@ -1,3 +1,0 @@
-
-- include: playbooks/dns-proxy/create.yml
-- include: playbooks/libvirt/create.yml

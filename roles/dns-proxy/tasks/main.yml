@@ -1,11 +1,4 @@
 
-# - pause:
-#     prompt: "Do you want to let us configure your network stack [yes|no] ? (!!! Big modifications on your host system !!!)"
-#   register: let_us
-#
-# - meta: end_play
-#   when: not let_us.user_input | bool
-
 - name: main.yml - include creation part
   include: create/main.yml
   when: action == 'create'

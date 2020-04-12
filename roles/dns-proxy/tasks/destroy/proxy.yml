@@ -1,11 +1,7 @@
 
-- name: destroy/proxy.yml - disable dnsmasq instance for proxy
-  service:
-    name: dnsmasq@proxy
-    enabled: no
-    state: stopped
-
 - name: destroy/proxy.yml - remove dnsmasq instance for proxy
-  template:
-    src: templates/dnsmasq-proxy.j2
-    dest: /etc/dnsmasq.d/proxy.conf
+  file:
+    state: absent
+    path: /etc/dnsmasq.d/proxy.conf
+  notify:
+    - stop and disable dnsmasq proxy service

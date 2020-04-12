@@ -1,9 +1,8 @@
----
 
 - hosts: localhost
   become: yes
   gather_facts: no
   vars:
-    action: create
+    action: destroy
   roles:
     - libvirt

@@ -1,0 +1,24 @@
+---
+
+- name: restart networking
+  service:
+    name: networking
+    state: restarted
+
+- name: stop and disable dnsmasq
+  service:
+    name: dnsmasq
+    state: stopped
+    enabled: no
+
+- name: stop and disable dnsmasq proxy service
+  service:
+    name: dnsmasq@proxy
+    enabled: no
+    state: stopped
+
+- name: stop and disable dnsmasq interface service
+  service:
+    name: dnsmasq@{{ current_interface }}
+    enabled: no
+    state: stopped

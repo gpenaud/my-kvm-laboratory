@@ -3,16 +3,31 @@
   blockinfile:
     path: /etc/network/interfaces
     block: |
+
       # ensure to source all other interfaces
       source /etc/network/interfaces.d/*
 
 - name: main.yml - generate systemd dnmasq@ service
-  template:
-    src: templates/dnsmasq@.service.j2
+  copy:
+    src: files/dnsmasq@.service
     dest: /etc/systemd/system/dnsmasq@.service
+    owner: root
+    group: root
+
+- name: main.yml - install dnsmasq
+  package:
+    name: dnsmasq
+    state: present
+  notify:
+    - stop and disable dnsmasq
 
 - name: main.yml - create proxy dnsmasq instance
   include: proxy.yml
+
+- name: main.yml - set 127.0.0.1 as nameserver in resolv.conf
+  copy:
+    content: 'nameserver 127.0.0.1'
+    dest: /etc/resolv.conf
 
 - name: main.yml - create bridges and dnsmasq
   include: bridge.yml

@@ -3,9 +3,8 @@
   template:
     src: templates/bridge.j2
     dest: "/etc/network/interfaces.d/{{ interface.name }}"
-
-- name: "create/bridge.yml - make interface {{ interface.name }} up"
-  command: ifup {{ interface.name }}
+  notify:
+    - restart networking
 
 - name: "create/bridge.yml - generate dnsmasq instance for {{ interface.name }}"
   template:
